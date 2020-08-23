@@ -1,0 +1,7 @@
+---
+# handlers file for mygalaxy
+#
+- name: httpd_installed
+  debug:
+   msg: "httpd installed successfully..."
+ 

@@ -1,0 +1,46 @@
+---
+# tasks file for local
+#
+- name: create a new ec2 key pair
+  ec2_key:
+    name: ansible_key
+    ec2_region: 'ap-south-1'
+    key_material: 'ssh-rsa AOtT0NLkf+hL0a63uuBcWQq9km3grWAZwMYgUAVSaQM1Xm/tynkRhKt'
+    aws_access_key: "{{ myuser }}"
+    aws_secret_key: "{{ mypass }}"
+- name: example using security group rule descriptions
+  ec2_group:
+        name: ansible_sg
+        description: sg with rule descriptions
+        vpc_id: vpc-eb9ac183
+        #  profile: "{{ aws_profile }}"
+        rules:
+          - proto: tcp
+            ports:
+            - 80
+            cidr_ip: 0.0.0.0/0
+            rule_desc: allow all on port 80
+          - proto: tcp
+            ports:
+            - 22
+            cidr_ip: 0.0.0.0/0
+            rule_desc: allow all on port 22
+        ec2_region: 'ap-south-1'
+        aws_access_key: "{{ myuser }}"
+        aws_secret_key: "{{ mypass }}"
+
+- name: launch EC2
+  ec2:
+    key_name: "ansible_key"
+    instance_type: "t2.micro"
+    image: "ami-0ebc1ac48dfd14136"
+    wait: yes
+    count: 3
+    vpc_subnet_id: "subnet-e438788c"
+    assign_public_ip: yes
+    region: "ap-south-1"
+    state: present
+    group: "ansible_sg"
+    aws_access_key: "{{ myuser }}"
+    aws_secret_key: "{{ mypass }}"
+

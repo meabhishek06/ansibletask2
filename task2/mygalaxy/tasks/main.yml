@@ -1,0 +1,35 @@
+---
+# tasks file for mygalaxy
+#
+
+
+- package:
+        name: "{{ pname }}"
+        state: present
+- copy: 
+        src: "abhi.html"
+        #  content: "this is {{ n }} \n"
+        dest: "/var/www/html/abhi.html"
+  ignore_errors: yes
+  register: x
+- service:
+        name: "httpd"
+        state: started
+- debug:
+        msg: "this is {{ n }}"
+- debug:
+        var: x       
+- name: checking service status
+  command: systemctl status "{{ item }}"
+  with_items:
+  - httpd
+  register: result
+  ignore_errors: yes
+- name: showing report
+  debug:
+   var: result
+- name: checking httpd installation
+  command: rpm -q httpd
+  ignore_errors: True
+  notify: httpd_installed
+ 
